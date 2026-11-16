@@ -25,7 +25,7 @@ RESOLVE_ARGS=()
 [ -n "$WITH" ]     && RESOLVE_ARGS+=(--with "$WITH")
 [ -n "$WITHOUT" ]  && RESOLVE_ARGS+=(--without "$WITHOUT")
 
-RESOLVED=$(resolve_active_set "${RESOLVE_ARGS[@]}") || exit 1
+RESOLVED=$(resolve_active_set "${RESOLVE_ARGS[@]+"${RESOLVE_ARGS[@]}"}") || exit 1
 eval "$(echo "$RESOLVED" | sed 's/^/export /')"
 
 export AUTH_MODE=$( [ "$WANT_AUTH" = "1" ] && echo oauth2 || echo none )
@@ -162,7 +162,7 @@ if [ "$WANT_AUTH" = "1" ]; then
     fi
     printf "."; sleep 5
   done
-  [ "$kc_ok" = "1" ] || { echo ""; print_warning "Keycloak not ready yet — it may need another minute."; }
+  [ "$kc_ok" = "1" ] || { echo ""; print_warning "Keycloak not ready yet, it may need another minute."; }
 fi
 echo ""
 
@@ -179,7 +179,7 @@ registry_with_lock registry_upsert_validator app-provider builtin "" "" \
 registry_with_lock registry_upsert_validator app-user builtin "" "" \
   "$( [ "$APP_USER_PROFILE" = "on" ] && echo true || echo false )"
 
-print_header "LocalNet is up! 🎉"
+print_header "LocalNet is up!"
 echo ""
 echo "  Wallet UIs:"
 [ "$APP_USER_PROFILE" = "on" ]     && echo "    App User     →  http://wallet.localhost:2000  (login: app-user)"
@@ -197,7 +197,7 @@ if [ "$WANT_AUTH" = "1" ]; then
   echo "    Admin console  →  http://keycloak.localhost:8082  (admin / admin)"
   echo "    Realms: AppProvider, AppUser   Grant: client_credentials"
 else
-  echo "  Auth: self-signed HS256 (secret: $(auth_selfsigned_secret), audience: ${AUTH_AUDIENCE})"
+  echo "  Auth: self signed HS256 (secret: $(auth_selfsigned_secret), audience: ${AUTH_AUDIENCE})"
 fi
 echo ""
 echo "  Credentials & parties:  canton builder env"

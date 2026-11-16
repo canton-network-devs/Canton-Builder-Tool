@@ -63,6 +63,20 @@ check_dep "docker"  "Install Docker Desktop from https://www.docker.com/products
 check_dep "curl"    "brew install curl  (macOS) | sudo apt install curl  (Linux)"
 check_dep "jq"      "brew install jq    (macOS) | sudo apt install jq    (Linux)"
 check_dep "git"     "brew install git   (macOS) | sudo apt install git   (Linux)"
+
+BASH4_PATH=""
+for _b in /opt/homebrew/bin/bash /usr/local/bin/bash /usr/bin/bash "$(command -v bash)"; do
+  if [ -x "$_b" ] && [ "$("$_b" -c 'echo ${BASH_VERSINFO[0]}' 2>/dev/null || echo 0)" -ge 4 ]; then
+    BASH4_PATH="$_b"; break
+  fi
+done
+if [ -n "$BASH4_PATH" ]; then
+  ok "bash 4+ found ($BASH4_PATH)"
+else
+  err "bash 4+ not found — macOS ships bash 3.2, which can't run the tool"
+  echo "      Fix: brew install bash   (then re-run this installer)"
+  MISSING_DEPS+=("bash>=4")
+fi
 echo ""
 if [ ${#MISSING_DEPS[@]} -gt 0 ]; then
   err "Missing required dependencies: ${MISSING_DEPS[*]}"

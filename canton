@@ -1,5 +1,17 @@
 #!/usr/bin/env bash
 
+if [ -z "${BASH_VERSINFO:-}" ] || [ "${BASH_VERSINFO[0]}" -lt 4 ]; then
+  for _alt in /opt/homebrew/bin/bash /usr/local/bin/bash /usr/bin/bash; do
+    if [ -x "$_alt" ] && [ "$("$_alt" -c 'echo ${BASH_VERSINFO[0]}' 2>/dev/null || echo 0)" -ge 4 ]; then
+      exec "$_alt" "$0" "$@"
+    fi
+  done
+  echo "canton builder needs bash 4 or newer (macOS ships bash 3.2)." >&2
+  echo "Install a newer bash with Homebrew:  brew install bash" >&2
+  echo "Then re-run your command, e.g.:       canton builder start" >&2
+  exit 1
+fi
+
 set -euo pipefail
 CANTON_DEVREL_DIR="${CANTON_DEVREL_DIR:-${CANTON_BUILDER_DIR:-$HOME/.canton-builder}}"
 VERSION="2.0.0"
@@ -84,39 +96,39 @@ fi
 case "$BUILDER_COMMAND" in
   start)
     shift 2
-    exec "$CANTON_DEVREL_DIR/scripts/start.sh" "$@"
+    exec "$BASH" "$CANTON_DEVREL_DIR/scripts/start.sh" "$@"
     ;;
   stop)
     shift 2
-    exec "$CANTON_DEVREL_DIR/scripts/stop.sh" "$@"
+    exec "$BASH" "$CANTON_DEVREL_DIR/scripts/stop.sh" "$@"
     ;;
   status)
     shift 2
-    exec "$CANTON_DEVREL_DIR/scripts/status.sh" "$@"
+    exec "$BASH" "$CANTON_DEVREL_DIR/scripts/status.sh" "$@"
     ;;
   env)
     shift 2
-    exec "$CANTON_DEVREL_DIR/scripts/env.sh" "$@"
+    exec "$BASH" "$CANTON_DEVREL_DIR/scripts/env.sh" "$@"
     ;;
   token)
     shift 2
-    exec "$CANTON_DEVREL_DIR/scripts/token.sh" "$@"
+    exec "$BASH" "$CANTON_DEVREL_DIR/scripts/token.sh" "$@"
     ;;
   deploy)
     shift 2
-    exec "$CANTON_DEVREL_DIR/scripts/deploy.sh" "$@"
+    exec "$BASH" "$CANTON_DEVREL_DIR/scripts/deploy.sh" "$@"
     ;;
   logs)
     shift 2
-    exec "$CANTON_DEVREL_DIR/scripts/logs.sh" "${@:-}"
+    exec "$BASH" "$CANTON_DEVREL_DIR/scripts/logs.sh" "$@"
     ;;
   reset)
     shift 2
-    exec "$CANTON_DEVREL_DIR/scripts/reset.sh" "$@"
+    exec "$BASH" "$CANTON_DEVREL_DIR/scripts/reset.sh" "$@"
     ;;
   validator)
     shift 2
-    exec "$CANTON_DEVREL_DIR/scripts/validator.sh" "$@"
+    exec "$BASH" "$CANTON_DEVREL_DIR/scripts/validator.sh" "$@"
     ;;
   version|--version|-v)
     echo "canton builder v${VERSION}"
