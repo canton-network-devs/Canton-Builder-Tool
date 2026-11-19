@@ -4,7 +4,7 @@ set -euo pipefail
 REPO="canton-network-devs/Canton-Builder-Tool"
 INSTALL_DIR="$HOME/.canton-builder"
 BIN_DIR="$HOME/.local/bin"
-VERSION="2.0.0"
+VERSION="3.0.0"
 BOLD='\033[1m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
